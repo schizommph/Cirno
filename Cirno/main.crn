@@ -1,4 +1,7 @@
+# initialize variable
 i = 20
+
+# check around
 if i >= 20
 	print "Num too large\n"
 elif i >= 10

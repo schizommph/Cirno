@@ -97,6 +97,9 @@
                         case '"':
                             GetString();
                             break;
+                        case '#':
+                            GetComment();
+                            break;
                         default:
                             ErrorManager.AddError(new Error($"Symbol \"{currentChar}\" is not recognized.", currentLine, ErrorType.SymbolNotRecognized, ErrorSafety.Fatal));
                             break;
@@ -139,6 +142,15 @@
             }
             Advance();
             tokens.Add(new Token(TokenType.STRING, str, currentLine));
+        }
+        void GetComment()
+        {
+            string comment = "";
+            while (Peak() != '\n')
+            {
+                comment += Advance();
+            }
+            Advance();
         }
         void GetIdentifier()
         {
