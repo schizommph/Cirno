@@ -345,4 +345,34 @@ namespace Cirno
             }
         }
     }
+
+    // OOP
+    class FunctionClass : ObjectClass
+    {
+        public string name { get; private set; }
+        public FunctionNode node { get; private set; }
+        public FunctionClass(FunctionNode node)
+        {
+            this.node = node;
+            this.name = node.name;
+
+        }
+        public override string Out()
+        {
+            // implement tostring
+            return $"{ToString()}";
+        }
+        public override string ToString()
+        {
+            return $"<Function \"{node.name}\">";
+        }
+        public override string GetType()
+        {
+            return "Function";
+        }
+        public ObjectClass Call(List<ObjectClass> parameters, Interpreter interpreter)
+        {
+            return this.node.Call(parameters, interpreter);
+        }
+    }
 }

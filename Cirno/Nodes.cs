@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Cirno
 {
@@ -142,6 +143,33 @@ namespace Cirno
             return interpreter.VisitNovaNode(this, parent);
         }
     }
+    class BreakNode : Node
+    {
+        public override string ToString()
+        {
+            return $"<BreakNode>";
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitBreakNode(this, parent);
+        }
+    }
+    class ReturnNode : Node
+    {
+        public Node expr { get; private set; }
+        public override string ToString()
+        {
+            return $"<ReturnNode {expr}>";
+        }
+        public ReturnNode(Node expr)
+        {
+            this.expr = expr;
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitReturnNode(this, parent);
+        }
+    }
     class StringNode : Node
     {
         public string value { get; private set; }
@@ -176,6 +204,77 @@ namespace Cirno
         public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
         {
             return interpreter.VisitBinaryOperatorNode(this, parent);
+        }
+    }
+
+    // OOP
+    class CallNode : Node
+    {
+        public string name { get; private set; }
+        public List<Node> arguments { get; private set; }
+
+        public CallNode(string name, List<Node> arguments)
+        {
+            this.name = name;
+            this.arguments = arguments;
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitCallNode(this, parent);
+        }
+    }
+    class InnerFunctionNode : Node
+    {
+        public List<string> parameters { get; private set; }
+        public TreeNode action { get; private set; }
+        public InnerFunctionNode(List<string> parameters, TreeNode action)
+        {
+            this.parameters = parameters;
+            this.action = action;
+        }
+        public ObjectClass Call(List<ObjectClass> arguments, Interpreter interpreter)
+        {
+            try
+            {
+                Enviorment env = new Enviorment(null);
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    env.SetVariable(parameters[i], arguments[i]);
+                }
+                return interpreter.VisitTreeNode(action, env);
+            }
+            catch(ReturnException e)
+            {
+                return e.value;
+            }
+        }
+    }
+    class FunctionNode : Node
+    {
+        public string name { get; private set; }
+        public List<InnerFunctionNode> actions { get; private set; }
+
+        public FunctionNode(string name, InnerFunctionNode action)
+        {
+            this.name = name;
+            this.actions = new List<InnerFunctionNode>();
+            this.actions.Add(action);
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitFunctionNode(this, parent);
+        }
+        public ObjectClass Call(List<ObjectClass> arguments, Interpreter interpreter)
+        {
+            foreach(InnerFunctionNode action in actions)
+            {
+                if(action.parameters.Count == arguments.Count)
+                {
+                    return action.Call(arguments, interpreter);
+                }
+            }
+            ErrorManager.AddError(new Error($"Couldn't find function \"{name}\" with parameter count \"{arguments.Count}\".", ErrorType.CorrectFunctionDoesNotExist, ErrorSafety.Fatal));
+            return new NovaClass();
         }
     }
 }

@@ -94,6 +94,9 @@
                         case ')':
                             tokens.Add(new Token(TokenType.CLOSED_PAREN, this.currentChar, currentLine));
                             break;
+                        case ',':
+                            tokens.Add(new Token(TokenType.COMMA, this.currentChar, currentLine));
+                            break;
                         case '"':
                             GetString();
                             break;
@@ -188,6 +191,9 @@
                 case "else":
                     tokens.Add(new Token(TokenType.ELSE, iden, currentLine));
                     return;
+                case "fn":
+                    tokens.Add(new Token(TokenType.FN, iden, currentLine));
+                    return;
                 case "true":
                     tokens.Add(new Token(TokenType.BOOL, true, currentLine));
                     return;
@@ -196,6 +202,13 @@
                     return;
                 case "nova":
                     tokens.Add(new Token(TokenType.NOVA, iden, currentLine));
+                    return;
+
+                case "break":
+                    tokens.Add(new Token(TokenType.BREAK, iden, currentLine));
+                    return;
+                case "return":
+                    tokens.Add(new Token(TokenType.RETURN, iden, currentLine));
                     return;
             }
             tokens.Add(new Token(TokenType.IDENTIFIER, iden, currentLine));

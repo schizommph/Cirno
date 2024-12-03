@@ -47,6 +47,14 @@ namespace Cirno
         {
             return new NovaClass();
         }
+        public ObjectClass VisitBreakNode(BreakNode node, Enviorment parent)
+        {
+            throw new BreakException();
+        }
+        public ObjectClass VisitReturnNode(ReturnNode node, Enviorment parent)
+        {
+            throw new ReturnException(node.expr.Visit(this, parent));
+        }
         public ObjectClass VisitSetVariableNode(SetVariableNode node, Enviorment parent)
         {
             ObjectClass expr = node.expr.Visit(this, parent);
@@ -99,9 +107,38 @@ namespace Cirno
             {
                 if(node.expr.Visit(this, parent).Equals(BoolClass.False).value)
                     break;
-                node.action.Visit(this, parent);
+                try
+                {
+                    node.action.Visit(this, parent);
+                }
+                catch(BreakException)
+                {
+                    break;
+                }
             }
             return new NovaClass();
+        }
+        public ObjectClass VisitFunctionNode(FunctionNode node, Enviorment parent)
+        {
+            if (!parent.ContainsVariable(node.name))
+            {
+                Enviorment.SetGlobalVariable(node.name, new FunctionClass(node));
+            }
+            else
+            {
+                FunctionClass func = (FunctionClass)parent.GetVariable(node.name);
+                func.node.actions.AddRange(node.actions);
+            }
+            return new NovaClass();
+        }
+        public ObjectClass VisitCallNode(CallNode node, Enviorment parent)
+        {
+            List<ObjectClass> arguments = new List<ObjectClass>();
+            foreach(Node argument in node.arguments)
+            {
+                arguments.Add(argument.Visit(this, parent));
+            }
+            return ((FunctionClass)parent.GetVariable(node.name)).Call(arguments, this);
         }
         public ObjectClass VisitIfNode(IfNode node, Enviorment parent)
         {
@@ -114,8 +151,12 @@ namespace Cirno
                 }
             }
 
-            Enviorment elseEnv = new Enviorment(parent);
-            return node.elseAction.Visit(this, elseEnv);
+            if (node.elseAction != null)
+            {
+                Enviorment elseEnv = new Enviorment(parent);
+                return node.elseAction.Visit(this, elseEnv);
+            }
+            return new NovaClass();
         }
     }
 }
