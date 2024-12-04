@@ -18,6 +18,7 @@ namespace Cirno
         UnexpectedArithmeticOperation,
         UnexpectedLogicalOperation,
         CorrectFunctionDoesNotExist,
+        UnexpectedException,
     }
     enum ErrorSafety
     {

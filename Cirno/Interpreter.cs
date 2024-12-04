@@ -138,7 +138,15 @@ namespace Cirno
             {
                 arguments.Add(argument.Visit(this, parent));
             }
-            return ((FunctionClass)parent.GetVariable(node.name)).Call(arguments, this);
+            if(parent.ContainsVariable(node.name) && parent.GetVariable(node.name) is FunctionClass)
+            {
+                return ((FunctionClass)parent.GetVariable(node.name)).Call(arguments, this);
+            }
+            else
+            {
+                ErrorManager.AddError(new Error($"Function \"{node.name}\" does either not exist, or is not callable.", ErrorType.NoFoundVariable, ErrorSafety.Fatal));
+                return new NovaClass();
+            }
         }
         public ObjectClass VisitIfNode(IfNode node, Enviorment parent)
         {

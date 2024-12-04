@@ -158,7 +158,10 @@
         void GetIdentifier()
         {
             string iden = "" + this.currentChar;
-            while (Char.IsLetterOrDigit(Peak()))
+            while (Char.IsLetterOrDigit(Peak()) ||
+                   Peak() == '_' ||
+                   Peak() == '$' ||
+                   Peak() == '&')
             {
                 iden += Advance();
             }
