@@ -10,8 +10,10 @@ A simple programming language. **[WIP]**
 ```rust
 i = 0
 while i < 10
-  print "" + i + "\n"
+	print i + " "
+	i = i + 1
 end
+# "0 1 2 3 4 5 6 7 8 9"
 ```
 
 ## Fibonacci Sequence
@@ -20,14 +22,14 @@ fn fib(n)
 	a = 0
 	b = 1
 	while a < n
-		print "" + a + " "
+		print a + " "
 		c = a
 		a = b
 		b = c + b
 	end
 end
 
-fib(1000) # 0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987
+fib(1000) # "0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987"
 ```
 
 ## String replacement

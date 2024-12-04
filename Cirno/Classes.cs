@@ -106,6 +106,10 @@ namespace Cirno
             {
                 return new NumberClass(value + num.value);
             }
+            else if(other is StringClass str)
+            {
+                return new StringClass("" + value + str.value);
+            }
             else
             {
                 base.Add(other);
@@ -117,6 +121,20 @@ namespace Cirno
             if (other is NumberClass num)
             {
                 return new NumberClass(value - num.value);
+            }
+            else if(other is StringClass str)
+            {
+                if(value > str.value.Length)
+                {
+                    ErrorManager.AddError(new Error($"Value to larger than string length to substring.", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+                else if(value < 0)
+                {
+                    ErrorManager.AddError(new Error($"Value cannot be negative when substringing.", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+                return new StringClass(str.value.Substring((int)value));
             }
             else
             {
