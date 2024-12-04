@@ -1,1 +1,13 @@
-"Hello, World!"
+fn fib(n)
+	a = 0
+	b = 1
+	while a < n
+		print "" + a + " "
+		c = a
+		a = b
+		b = c + b
+	end
+end
+
+fib(1000)
+# 

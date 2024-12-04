@@ -20,7 +20,18 @@ namespace Cirno
             }
 
             Parser parser = new Parser(tokens);
-            TreeNode ast = parser.ParseAST();
+            TreeNode ast = null;
+            try
+            {
+                ast = parser.ParseAST();
+            }
+            catch(Exception)
+            {
+                ErrorManager.ComputeErrors();
+                
+                Console.ReadKey();
+                Environment.Exit(1);
+            }
 
             if (ErrorManager.ComputeErrors())
             {
@@ -33,11 +44,11 @@ namespace Cirno
             Interpreter interpreter = new Interpreter();
             Enviorment enviorment = new Enviorment(null);
 
-            Stopwatch watch = Stopwatch.StartNew();
+            // Stopwatch watch = Stopwatch.StartNew();
 
             try
             {
-                Console.Write(interpreter.Visit(ast, enviorment));
+                Console.Write(interpreter.Visit(ast, enviorment).Out());
             }
             catch (BreakException)
             {
@@ -48,8 +59,8 @@ namespace Cirno
                 ErrorManager.AddError(new Error($"Return had been used in an innappropriate matter.", ErrorType.UnexpectedException, ErrorSafety.Fatal));
             }
 
-            watch.Stop();
-            Console.WriteLine($"Elapsed: {watch.ElapsedMilliseconds / 1000f}");
+            // watch.Stop();
+            // Console.WriteLine($"Elapsed: {watch.ElapsedMilliseconds / 1000f}");
             Console.ReadKey();
         }
     }

@@ -186,6 +186,22 @@ namespace Cirno
             return interpreter.VisitStringNode(this, parent);
         }
     }
+    class ListNode : Node
+    {
+        public List<Node> items { get; private set; }
+        public ListNode(List<Node> items)
+        {
+            this.items = items;
+        }
+        public override string ToString()
+        {
+            return $"<ListNode {items}>";
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitListNode(this, parent);
+        }
+    }
     class BinaryOperatorNode : Node
     {
         public Node left { get; private set; }
@@ -204,6 +220,35 @@ namespace Cirno
         public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
         {
             return interpreter.VisitBinaryOperatorNode(this, parent);
+        }
+    }
+
+    class GetItemIndexNode : Node
+    {
+        public Node expr { get; private set; }
+        public Node index { get; private set; }
+        public GetItemIndexNode(Node expr, Node index)
+        {
+            this.expr = expr;
+            this.index = index;
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitGetItemIndexNode(this, parent);
+        }
+    }
+    class SetItemIndexNode : Node
+    {
+        public GetItemIndexNode item { get; private set; }
+        public Node expr { get; private set; }
+        public SetItemIndexNode(GetItemIndexNode item, Node expr)
+        {
+            this.item = item;
+            this.expr = expr;
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitSetItemIndexNode(this, parent);
         }
     }
 

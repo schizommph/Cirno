@@ -70,6 +70,16 @@ namespace Cirno
             ErrorManager.AddError(new Error($"Cannot compare with \"{GetType()}\" and \"{other.GetType()}\"", ErrorType.UnexpectedLogicalOperation, ErrorSafety.Warning));
             return new BoolClass(false);
         }
+        public virtual ObjectClass GetIndex(ObjectClass other)
+        {
+            ErrorManager.AddError(new Error($"Cannot get index from \"{GetType()}\" with \"{other.GetType()}\", or cannot get index at all", ErrorType.UnexpectedIndex, ErrorSafety.Warning));
+            return new NovaClass();
+        }
+        public virtual ObjectClass SetIndex(ObjectClass index, ObjectClass expr)
+        {
+            ErrorManager.AddError(new Error($"Cannot set index from \"{GetType()}\" with \"{index.GetType()}\", or cannot set index at all", ErrorType.UnexpectedIndex, ErrorSafety.Warning));
+            return new NovaClass();
+        }
     }
     class NumberClass : ObjectClass
     {
@@ -261,6 +271,58 @@ namespace Cirno
                 return new BoolClass(false);
             }
         }
+        public override ObjectClass GetIndex(ObjectClass other)
+        {
+            if(other is NumberClass index)
+            {
+                if(index.value < 0)
+                {
+                    ErrorManager.AddError(new Error("Cannot get char with index below 0", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+                else if(index.value > this.value.Length - 1)
+                {
+                    ErrorManager.AddError(new Error("Cannot get char with index above string length", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+
+                return new StringClass(value.Substring((int)index.value, 1));
+            }
+            else
+            {
+                return base.GetIndex(other);
+            }
+        }
+        public override ObjectClass SetIndex(ObjectClass index, ObjectClass expr)
+        {
+            if (index is NumberClass ind)
+            {
+                if (ind.value < 0)
+                {
+                    ErrorManager.AddError(new Error("Cannot get char with index below 0", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+                else if (ind.value > this.value.Length - 1)
+                {
+                    ErrorManager.AddError(new Error("Cannot get char with index above string length", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+                string[] str = value.Select(c => c.ToString()).ToArray();
+                str[(int)ind.value] = expr.Out();
+                this.value = string.Join("", str);
+                return new NovaClass();
+            }
+            else if(index is StringClass strind)
+            {
+                value = value.Replace(strind.value, expr.Out());
+                
+                return new NovaClass();
+            }
+            else
+            {
+                return base.SetIndex(index, expr);
+            }
+        }
     }
     class NovaClass : ObjectClass
     {
@@ -270,7 +332,7 @@ namespace Cirno
         }
         public override string ToString()
         {
-            return $"";
+            return $"Nova";
         }
         public override string GetType()
         {
@@ -342,6 +404,80 @@ namespace Cirno
             else
             {
                 return new BoolClass(false);
+            }
+        }
+    }
+
+    class ListClass : ObjectClass
+    {
+        public List<ObjectClass> items { get; private set; }
+        public ListClass(List<ObjectClass> items)
+        {
+            this.items = items;
+        }
+        public override string Out()
+        {
+            return ToString();
+        }
+        public override string ToString()
+        {
+            if (items.Count == 0)
+                return "[]";
+
+            string output = "";
+            foreach (ObjectClass item in items)
+            {
+                output += item.ToString() + ", ";
+            }
+            return $"[{output.Substring(0, output.Length - 2)}]";
+        }
+        public override string GetType()
+        {
+            return "List";
+        }
+        public override ObjectClass GetIndex(ObjectClass other)
+        {
+            if (other is NumberClass index)
+            {
+                if (index.value < 0)
+                {
+                    ErrorManager.AddError(new Error("Cannot get item with index below 0", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+                else if (index.value > this.items.Count - 1)
+                {
+                    ErrorManager.AddError(new Error("Cannot get item with index above string length", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+
+                return items[(int)index.value];
+            }
+            else
+            {
+                return base.GetIndex(other);
+            }
+        }
+        public override ObjectClass SetIndex(ObjectClass index, ObjectClass expr)
+        {
+            if (index is NumberClass ind)
+            {
+                if (ind.value < 0)
+                {
+                    ErrorManager.AddError(new Error("Cannot get item with index below 0", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+                else if (ind.value > this.items.Count - 1)
+                {
+                    ErrorManager.AddError(new Error("Cannot get item with index above string length", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+
+                items[(int)ind.value] = expr;
+                return items[(int)ind.value];
+            }
+            else
+            {
+                return base.SetIndex(index, expr);
             }
         }
     }

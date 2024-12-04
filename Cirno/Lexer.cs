@@ -94,6 +94,12 @@
                         case ')':
                             tokens.Add(new Token(TokenType.CLOSED_PAREN, this.currentChar, currentLine));
                             break;
+                        case '[':
+                            tokens.Add(new Token(TokenType.OPEN_SQUARE, this.currentChar, currentLine));
+                            break;
+                        case ']':
+                            tokens.Add(new Token(TokenType.CLOSED_SQUARE, this.currentChar, currentLine));
+                            break;
                         case ',':
                             tokens.Add(new Token(TokenType.COMMA, this.currentChar, currentLine));
                             break;
@@ -149,7 +155,7 @@
         void GetComment()
         {
             string comment = "";
-            while (Peak() != '\n')
+            while (Peak() != '\n' && Peak() != '\0')
             {
                 comment += Advance();
             }
@@ -160,8 +166,7 @@
             string iden = "" + this.currentChar;
             while (Char.IsLetterOrDigit(Peak()) ||
                    Peak() == '_' ||
-                   Peak() == '$' ||
-                   Peak() == '&')
+                   Peak() == '$')
             {
                 iden += Advance();
             }

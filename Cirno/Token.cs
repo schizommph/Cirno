@@ -21,6 +21,7 @@ enum TokenType
     BREAK, RETURN,
 
     OPEN_PAREN, CLOSED_PAREN,
+    OPEN_SQUARE, CLOSED_SQUARE,
     DO, END,
 
     PRINT

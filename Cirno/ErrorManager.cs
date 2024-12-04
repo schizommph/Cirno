@@ -19,6 +19,8 @@ namespace Cirno
         UnexpectedLogicalOperation,
         CorrectFunctionDoesNotExist,
         UnexpectedException,
+        UnexpectedIndex,
+        IndexOutOfBounds,
     }
     enum ErrorSafety
     {
@@ -56,7 +58,7 @@ namespace Cirno
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     break;
             }
-            Console.WriteLine($"\n[{(int)type}] {message}");
+            Console.WriteLine($"\n[{type}:{(int)type}] {message}");
             if (line != -1)
             {
                 Console.Write($"\tAt line {line}.");

@@ -53,7 +53,31 @@ namespace Cirno
         }
         public ObjectClass VisitReturnNode(ReturnNode node, Enviorment parent)
         {
+            if(node.expr == null)
+            {
+                throw new ReturnException(new NovaClass());
+            }
             throw new ReturnException(node.expr.Visit(this, parent));
+        }
+        public ObjectClass VisitGetItemIndexNode(GetItemIndexNode node, Enviorment parent)
+        {
+            return node.expr.Visit(this, parent).GetIndex(node.index.Visit(this, parent));
+        }
+        public ObjectClass VisitSetItemIndexNode(SetItemIndexNode node, Enviorment parent)
+        {
+            ObjectClass item = node.item.expr.Visit(this, parent);
+            ObjectClass index = node.item.index.Visit(this, parent);
+            ObjectClass expr = node.expr.Visit(this, parent);
+            return item.SetIndex(index, expr);
+        }
+        public ObjectClass VisitListNode(ListNode node, Enviorment parent)
+        {
+            List<ObjectClass> items = new List<ObjectClass>();
+            foreach(Node item in node.items)
+            {
+                items.Add(item.Visit(this, parent));
+            }
+            return new ListClass(items);
         }
         public ObjectClass VisitSetVariableNode(SetVariableNode node, Enviorment parent)
         {

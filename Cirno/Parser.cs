@@ -81,7 +81,7 @@ namespace Cirno
                     parameters.Add((string)Consume(TokenType.IDENTIFIER).lexeme);
                     if(!Match(TokenType.COMMA) && !Match(TokenType.CLOSED_PAREN))
                     {
-                        ErrorManager.AddError(new Error($"Unexpected parameter when constructing function \"{name}\", with culprit being \"{currentToken.lexeme}\".", ErrorType.UnexpectedToken, ErrorSafety.Fatal));
+                        ErrorManager.AddError(new Error($"Unexpected parameter when constructing function \"{name}\", with culprit being \"{currentToken.lexeme}\".", currentToken.line, ErrorType.UnexpectedToken, ErrorSafety.Fatal));
                     }
                     else if(Match(TokenType.COMMA))
                     {
@@ -125,7 +125,7 @@ namespace Cirno
                     arguments.Add(Expr());
                     if (!Match(TokenType.COMMA) && !Match(TokenType.CLOSED_PAREN))
                     {
-                        ErrorManager.AddError(new Error($"Unexpected parameter when constructing call \"{name}\", with the culprit being \"{currentToken.lexeme}\".", ErrorType.UnexpectedToken, ErrorSafety.Fatal));
+                        ErrorManager.AddError(new Error($"Unexpected parameter when constructing call \"{name}\", with the culprit being \"{currentToken.lexeme}\".", currentToken.line, ErrorType.UnexpectedToken, ErrorSafety.Fatal));
                     }
                     else if (Match(TokenType.COMMA))
                     {
@@ -172,6 +172,27 @@ namespace Cirno
                 Advance();
                 ret = Expr();
                 Consume(TokenType.CLOSED_PAREN);
+            }
+            else if (Match(TokenType.OPEN_SQUARE))
+            {
+                Token list = currentToken;
+                Advance();
+                List<Node> items = new List<Node>();
+
+                while (!Match(TokenType.CLOSED_SQUARE))
+                {
+                    items.Add(Expr());
+                    if (!Match(TokenType.COMMA) && !Match(TokenType.CLOSED_SQUARE))
+                    {
+                        ErrorManager.AddError(new Error($"Unexpected object when constructing list, with the culprit being \"{currentToken.lexeme}\".", list.line, ErrorType.UnexpectedToken, ErrorSafety.Fatal));
+                    }
+                    else if (Match(TokenType.COMMA))
+                    {
+                        Consume(TokenType.COMMA);
+                    }
+                }
+                Consume(TokenType.CLOSED_SQUARE);
+                ret = new ListNode(items);
             }
             else if (Match(TokenType.DO))
             {
@@ -235,6 +256,25 @@ namespace Cirno
                 }
                 Advance();
             }
+
+            bool isList = false;
+            while (Match(TokenType.OPEN_SQUARE))
+            {
+                isList = true;
+                Advance();
+                Node index = Expr();
+                Consume(TokenType.CLOSED_SQUARE);
+                ret = new GetItemIndexNode(ret, index);
+            }
+            if (isList)
+            {
+                if (Match(TokenType.EQUALS))
+                {
+                    Advance();
+                    ret = new SetItemIndexNode((GetItemIndexNode)ret, Expr());
+                }
+            }
+
             return ret;
         }
         Node Term()
