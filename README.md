@@ -2,15 +2,29 @@
 A simple programming language. **[WIP]**
 
 ## Hello, World! Program
-```ruby
+```rust
 "Hello, World!"
 ```
 
 ## Simple loop
-```ruby
+```rust
 i = 0
-while i < 10 do
+while i < 10
   print "" + i + "\n"
-  i = i + 1
 end
+```
+
+## Fibonacci Sequence
+```rust
+fn fib(n)
+	if n == 0
+		return 0
+	elif n == 1 or n == 2
+		return 1
+	else
+		return fib(n - 1) + fib(n - 2)
+	end
+end
+
+print fib(9)
 ```
