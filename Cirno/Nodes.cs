@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Collections.Specialized.BitVector32;
@@ -249,6 +250,34 @@ namespace Cirno
         public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
         {
             return interpreter.VisitSetItemIndexNode(this, parent);
+        }
+    }
+    class AddToItemNode : Node
+    {
+        public Node item { get; private set; }
+        public Node expr { get; private set; }
+        public AddToItemNode(Node item, Node expr)
+        {
+            this.item = item;
+            this.expr = expr;
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitAddToItemNode(this, parent);
+        }
+    }
+    class PopFromItemNode : Node
+    {
+        public Node item { get; private set; }
+        public Node index { get; private set; }
+        public PopFromItemNode(Node item, Node index)
+        {
+            this.item = item;
+            this.index = index;
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitPopFromItemNode(this, parent);
         }
     }
 

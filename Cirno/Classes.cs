@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -78,6 +80,16 @@ namespace Cirno
         public virtual ObjectClass SetIndex(ObjectClass index, ObjectClass expr)
         {
             ErrorManager.AddError(new Error($"Cannot set index from \"{GetType()}\" with \"{index.GetType()}\", or cannot set index at all", ErrorType.UnexpectedIndex, ErrorSafety.Warning));
+            return new NovaClass();
+        }
+        public virtual ObjectClass AddToItems(ObjectClass expr)
+        {
+            ErrorManager.AddError(new Error($"Cannot add to type \"{GetType()}\".", ErrorType.UnallowedListModification, ErrorSafety.Warning));
+            return new NovaClass();
+        }
+        public virtual ObjectClass PopFromItems(ObjectClass expr)
+        {
+            ErrorManager.AddError(new Error($"Cannot pop from type \"{GetType()}\", or cannot pop at all.", ErrorType.UnallowedListModification, ErrorSafety.Warning));
             return new NovaClass();
         }
     }
@@ -431,7 +443,7 @@ namespace Cirno
         public List<ObjectClass> items { get; private set; }
         public ListClass(List<ObjectClass> items)
         {
-            this.items = items;
+            this.items = new List<ObjectClass>(items);
         }
         public override string Out()
         {
@@ -453,6 +465,19 @@ namespace Cirno
         {
             return "List";
         }
+
+        public override BoolClass Equals(ObjectClass other)
+        {
+            if(other is ListClass list)
+            {
+                return new BoolClass(list.items.SequenceEqual(items));
+            }
+            else
+            {
+                return base.Equals(other);
+            }
+        }
+
         public override ObjectClass GetIndex(ObjectClass other)
         {
             if (other is NumberClass index)
@@ -496,6 +521,75 @@ namespace Cirno
             else
             {
                 return base.SetIndex(index, expr);
+            }
+        }
+        public override ObjectClass Add(ObjectClass other)
+        {
+            if (other is ListClass list)
+            {
+                List<ObjectClass> ret = new List<ObjectClass>(items);
+
+                foreach(ObjectClass item in list.items)
+                {
+                    ret.Add(item);
+                }
+
+                return new ListClass(ret);
+            }
+            return base.Subtract(other);
+        }
+        public override ObjectClass Subtract(ObjectClass other)
+        {
+            if(other is ListClass list)
+            {
+                List<ObjectClass> ret = new List<ObjectClass>(items);
+
+                foreach (ObjectClass otherItem in list.items)
+                {
+                    foreach(ObjectClass item in items)
+                    {
+                        if (item.Equals(otherItem).value)
+                        {
+                            for(int i = ret.Count - 1; i >= 0; i--)
+                            {
+                                if (otherItem.Equals(ret[i]).value)
+                                {
+                                    ret.RemoveAt(i);
+                                }
+                            }
+                        }
+                    }
+                }
+                return new ListClass(ret);
+            }
+            return base.Subtract(other);
+        }
+        public override ObjectClass AddToItems(ObjectClass expr)
+        {
+            items.Add(expr);
+            return expr;
+        }
+        public override ObjectClass PopFromItems(ObjectClass expr)
+        {
+            if (expr is NumberClass num)
+            {
+                if (num.value < 0)
+                {
+                    ErrorManager.AddError(new Error("Cannot pop item with index below 0", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+                else if (num.value > this.items.Count - 1)
+                {
+                    ErrorManager.AddError(new Error("Cannot pop item with index above list length", ErrorType.IndexOutOfBounds, ErrorSafety.Warning));
+                    return new NovaClass();
+                }
+                ObjectClass item = items[(int)num.value];
+                items.RemoveAt((int)num.value);
+                return item;
+            }
+            else
+            {
+                return base.PopFromItems(expr);
             }
         }
     }

@@ -20,6 +20,8 @@ enum TokenType
     WHILE, IF, ELIF, ELSE, FN,
     BREAK, RETURN,
 
+    ADD, POP,
+
     OPEN_PAREN, CLOSED_PAREN,
     OPEN_SQUARE, CLOSED_SQUARE,
     DO, END,

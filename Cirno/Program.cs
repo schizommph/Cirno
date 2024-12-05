@@ -20,18 +20,7 @@ namespace Cirno
             }
 
             Parser parser = new Parser(tokens);
-            TreeNode ast = null;
-            try
-            {
-                ast = parser.ParseAST();
-            }
-            catch(Exception)
-            {
-                ErrorManager.ComputeErrors();
-                
-                Console.ReadKey();
-                Environment.Exit(1);
-            }
+            TreeNode ast = parser.ParseAST();
 
             if (ErrorManager.ComputeErrors())
             {

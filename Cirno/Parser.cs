@@ -148,6 +148,11 @@ namespace Cirno
                 ret = new NumberNode((float)currentToken.lexeme);
                 Advance();
             }
+            else if (Match(TokenType.MINUS))
+            {
+                Advance();
+                ret = new BinaryOperatorNode(Factor(), new NumberNode(-1f), new Token(TokenType.STAR, '*', currentToken.line));
+            }
             else if (Match(TokenType.STRING))
             {
                 ret = new StringNode((string)currentToken.lexeme);
@@ -273,6 +278,19 @@ namespace Cirno
                     Advance();
                     ret = new SetItemIndexNode((GetItemIndexNode)ret, Expr());
                 }
+            }
+
+            if (Match(TokenType.ADD))
+            {
+                Advance();
+                Node expr = Expr();
+                ret = new AddToItemNode(ret, expr);
+            }
+            else if (Match(TokenType.POP))
+            {
+                Advance();
+                Node expr = Expr();
+                ret = new PopFromItemNode(ret, expr);
             }
 
             return ret;

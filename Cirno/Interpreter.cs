@@ -70,6 +70,18 @@ namespace Cirno
             ObjectClass expr = node.expr.Visit(this, parent);
             return item.SetIndex(index, expr);
         }
+        public ObjectClass VisitAddToItemNode(AddToItemNode node, Enviorment parent)
+        {
+            ObjectClass item = node.item.Visit(this, parent);
+            ObjectClass expr = node.expr.Visit(this, parent);
+            return item.AddToItems(expr);
+        }
+        public ObjectClass VisitPopFromItemNode(PopFromItemNode node, Enviorment parent)
+        {
+            ObjectClass item = node.item.Visit(this, parent);
+            ObjectClass index = node.index.Visit(this, parent);
+            return item.PopFromItems(index);
+        }
         public ObjectClass VisitListNode(ListNode node, Enviorment parent)
         {
             List<ObjectClass> items = new List<ObjectClass>();

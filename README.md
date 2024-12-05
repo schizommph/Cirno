@@ -38,3 +38,39 @@ x = "Goodbye, World!"
 x["Goodbye"] = "Hello"
 print x # "Hello, World!"
 ```
+
+## 99 Bottles of Beer
+```rust
+fn println()
+	print "\n"
+end
+fn println(v)
+	print v
+	print "\n"
+end
+
+i = 99
+
+while true
+	if i != 1
+		println(i + " bottles of beer on the wall,")
+		println(i + " bottles of beer.")
+		println("Take one down, pass it around,")
+		i = i - 1
+		if i != 1
+			println(i + " bottles of beer on the wall.")
+		else
+			println("1 bottle of beer on the wall.")
+		end
+	else
+		println("1 bottle of beer on the wall,")
+		println("1 bottle of beer.")
+		println("Take one down, pass it around,")
+		println("No bottles of beer on the wall.")
+
+		break
+	end
+
+	println()
+end
+```

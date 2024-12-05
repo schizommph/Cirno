@@ -212,6 +212,13 @@
                     tokens.Add(new Token(TokenType.NOVA, iden, currentLine));
                     return;
 
+                case "add":
+                    tokens.Add(new Token(TokenType.ADD, iden, currentLine));
+                    return;
+                case "pop":
+                    tokens.Add(new Token(TokenType.POP, iden, currentLine));
+                    return;
+
                 case "break":
                     tokens.Add(new Token(TokenType.BREAK, iden, currentLine));
                     return;
