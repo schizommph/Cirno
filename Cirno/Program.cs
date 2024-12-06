@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Cirno.StandardIO;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 namespace Cirno
 {
@@ -33,11 +34,22 @@ namespace Cirno
             Interpreter interpreter = new Interpreter();
             Enviorment enviorment = new Enviorment(null);
 
+            Enviorment.global.Add(
+                "print", new FunctionClass(new Print())
+            );
+            Enviorment.global.Add(
+                "input", new FunctionClass(new Input())
+            );
+
             // Stopwatch watch = Stopwatch.StartNew();
 
             try
             {
-                Console.Write(interpreter.Visit(ast, enviorment).Out());
+                ObjectClass ret = interpreter.Visit(ast, enviorment);
+                if(ret != null)
+                {
+                    Console.Write(ret.Out());
+                }
             }
             catch (BreakException)
             {

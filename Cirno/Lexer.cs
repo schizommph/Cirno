@@ -172,9 +172,9 @@
             }
             switch (iden)
             {
-                case "print":
+                /*case "print":
                     tokens.Add(new Token(TokenType.PRINT, iden, currentLine));
-                    return;
+                    return;*/
                 case "do":
                     tokens.Add(new Token(TokenType.DO, iden, currentLine));
                     return;

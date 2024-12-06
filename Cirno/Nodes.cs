@@ -306,7 +306,7 @@ namespace Cirno
             this.parameters = parameters;
             this.action = action;
         }
-        public ObjectClass Call(List<ObjectClass> arguments, Interpreter interpreter)
+        public virtual ObjectClass Call(List<ObjectClass> arguments, Interpreter interpreter)
         {
             try
             {
@@ -327,13 +327,22 @@ namespace Cirno
     {
         public string name { get; private set; }
         public List<InnerFunctionNode> actions { get; private set; }
-
-        public FunctionNode(string name, InnerFunctionNode action)
+        public FunctionNode(string name)
         {
             this.name = name;
             this.actions = new List<InnerFunctionNode>();
-            this.actions.Add(action);
         }
+        public FunctionNode(string name, InnerFunctionNode action)
+        {
+            this.name = name;
+            this.actions = new List<InnerFunctionNode>() { action };
+        }
+        public FunctionNode(string name, List<InnerFunctionNode> actions)
+        {
+            this.name = name;
+            this.actions = actions;
+        }
+
         public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
         {
             return interpreter.VisitFunctionNode(this, parent);
