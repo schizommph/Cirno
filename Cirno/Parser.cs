@@ -50,6 +50,29 @@ namespace Cirno
                 Node expr = Expr();
                 return new ReturnNode(expr);
             }
+            else if (Match(TokenType.FOR))
+            {
+                Token forToken = currentToken;
+                Advance();
+                Token varName = Consume(TokenType.IDENTIFIER);
+                Consume(TokenType.IN);
+                Node list = Expr();
+
+                List<Node> ast = new List<Node>();
+                while (!Match(TokenType.END))
+                {
+                    if (currentToken == null || Peak() == null && !Match(TokenType.END))
+                    {
+                        ErrorManager.autocheck = true;
+                        ErrorManager.AddError(new Error($"Cannot find end after do.", forToken.line, ErrorType.UnfoundToken, ErrorSafety.Fatal));
+                        break;
+                    }
+                    ast.Add(Parse());
+                }
+                Consume(TokenType.END);
+
+                return new ForNode((string)varName.lexeme, list, new TreeNode(ast));
+            }
             else if (Match(TokenType.WHILE))
             {
                 Token doToken = currentToken;
@@ -198,6 +221,31 @@ namespace Cirno
                 }
                 Consume(TokenType.CLOSED_SQUARE);
                 ret = new ListNode(items);
+            }
+            else if (Match(TokenType.OPEN_CURLY))
+            {
+                Token dictToken = currentToken;
+                Advance();
+                Dictionary<Node, Node> items = new Dictionary<Node, Node>();
+
+                while (!Match(TokenType.CLOSED_CURLY))
+                {
+                    Node index = Expr();
+                    Consume(TokenType.COLON);
+                    Node expr = Expr();
+                    items[index] = expr;
+
+                    if (!Match(TokenType.COMMA) && !Match(TokenType.CLOSED_CURLY))
+                    {
+                        ErrorManager.AddError(new Error($"Unexpected object when constructing dict, with the culprit being \"{currentToken.lexeme}\".", dictToken.line, ErrorType.UnexpectedToken, ErrorSafety.Fatal));
+                    }
+                    else if (Match(TokenType.COMMA))
+                    {
+                        Consume(TokenType.COMMA);
+                    }
+                }
+                Consume(TokenType.CLOSED_CURLY);
+                ret = new DictionaryNode(items);
             }
             else if (Match(TokenType.DO))
             {
@@ -392,7 +440,7 @@ namespace Cirno
             if(currentToken.type != type)
             {
                 ErrorManager.AddError(new Error($"Expected \"{type}\", instead got {currentToken.type}", currentToken.line, ErrorType.UnexpectedToken, ErrorSafety.Fatal));
-                return null;
+                return new Token(TokenType.NOVA, "nova", -1);
             }
             else
             {

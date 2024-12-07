@@ -1,7 +1,1 @@
-while true
-	out = input("What is your name? ")
-	if out == ""
-		break
-	end
-	print("Hello, " + out + "!")
-end
+﻿

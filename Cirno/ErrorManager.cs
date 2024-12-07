@@ -22,6 +22,7 @@ namespace Cirno
         UnexpectedIndex,
         IndexOutOfBounds,
         UnallowedListModification,
+        NoKeyFound,
     }
     enum ErrorSafety
     {

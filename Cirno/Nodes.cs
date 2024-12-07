@@ -58,6 +58,23 @@ namespace Cirno
             return interpreter.VisitWhileNode(this, parent);
         }
     }
+    class ForNode : Node
+    {
+        public string varName { get; private set; }
+        public Node list { get; private set; }
+        public TreeNode action { get; private set; }
+
+        public ForNode(string varName, Node list, TreeNode action)
+        {
+            this.varName = varName;
+            this.list = list;
+            this.action = action;
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitForNode(this, parent);
+        }
+    }
     class IfNode : Node
     {
         public Dictionary<Node, TreeNode> ifActions { get; private set; }
@@ -201,6 +218,22 @@ namespace Cirno
         public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
         {
             return interpreter.VisitListNode(this, parent);
+        }
+    }
+    class DictionaryNode : Node
+    {
+        public Dictionary<Node, Node> items { get; private set; }
+        public DictionaryNode(Dictionary<Node, Node> items)
+        {
+            this.items = items;
+        }
+        public override string ToString()
+        {
+            return $"<DictionaryNode {items}>";
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitDictionaryNode(this, parent);
         }
     }
     class BinaryOperatorNode : Node

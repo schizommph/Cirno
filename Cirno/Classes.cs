@@ -92,6 +92,11 @@ namespace Cirno
             ErrorManager.AddError(new Error($"Cannot pop from type \"{GetType()}\", or cannot pop at all.", ErrorType.UnallowedListModification, ErrorSafety.Warning));
             return new NovaClass();
         }
+        public virtual ListClass ToList()
+        {
+            ErrorManager.AddError(new Error($"Cannot turn type \"{GetType()}\" into a list.", ErrorType.UnallowedListModification, ErrorSafety.Warning));
+            return new ListClass(new List<ObjectClass>());
+        }
     }
     class NumberClass : ObjectClass
     {
@@ -209,6 +214,7 @@ namespace Cirno
             }
             else
             {
+                base.GreaterThan(other);
                 return new BoolClass(false);
             }
         }
@@ -220,6 +226,7 @@ namespace Cirno
             }
             else
             {
+                base.LessThan(other);
                 return new BoolClass(false);
             }
         }
@@ -353,6 +360,15 @@ namespace Cirno
                 return base.SetIndex(index, expr);
             }
         }
+        public override ListClass ToList()
+        {
+            List<ObjectClass> ret = new List<ObjectClass>();
+            foreach(char c in value)
+            {
+                ret.Add(new StringClass(Convert.ToString(c)));
+            }
+            return new ListClass(ret);
+        }
     }
     class NovaClass : ObjectClass
     {
@@ -443,7 +459,7 @@ namespace Cirno
         public List<ObjectClass> items { get; private set; }
         public ListClass(List<ObjectClass> items)
         {
-            this.items = new List<ObjectClass>(items);
+            this.items = items;
         }
         public override string Out()
         {
@@ -591,6 +607,83 @@ namespace Cirno
             {
                 return base.PopFromItems(expr);
             }
+        }
+        public override ListClass ToList()
+        {
+            return new ListClass(this.items);
+        }
+    }
+    class DictionaryClass : ObjectClass
+    {
+        public Dictionary<ObjectClass, ObjectClass> items { get; private set; }
+        public DictionaryClass(Dictionary<ObjectClass, ObjectClass> items)
+        {
+            this.items = items;
+        }
+        public override string Out()
+        {
+            return ToString();
+        }
+        public override string ToString()
+        {
+            if (items.Count == 0)
+                return "{}";
+
+            string output = "";
+            foreach (ObjectClass item in items.Keys)
+            {
+                output += item.ToString() + ": " + items[item].ToString() + ", ";
+            }
+            return $"{{{output.Substring(0, output.Length - 2)}}}";
+        }
+        public override string GetType()
+        {
+            return "Dictionary";
+        }
+
+        public override BoolClass Equals(ObjectClass other)
+        {
+            if (other is DictionaryClass dict)
+            {
+                return new BoolClass(dict.items.SequenceEqual(items));
+            }
+            else
+            {
+                return base.Equals(other);
+            }
+        }
+
+        public override ObjectClass GetIndex(ObjectClass other)
+        {
+            foreach(ObjectClass item in items.Keys)
+            {
+                if (item.Equals(other).value)
+                {
+                    return items[item];
+                }
+            }
+
+            ErrorManager.AddError(new Error($"Dictionary does not have key \"{other.Out()}\".", ErrorType.NoKeyFound, ErrorSafety.Warning));
+            return new NovaClass();
+        }
+        public override ObjectClass SetIndex(ObjectClass index, ObjectClass expr)
+        {
+            items[index] = expr;
+            return expr;
+        }
+        public override ObjectClass PopFromItems(ObjectClass expr)
+        {
+            items.Remove(expr);
+            return expr;
+        }
+        public override ListClass ToList()
+        {
+            List<ObjectClass> ret = new List<ObjectClass>();
+            foreach (ObjectClass c in items.Keys)
+            {
+                ret.Add(c);
+            }
+            return new ListClass(ret);
         }
     }
 

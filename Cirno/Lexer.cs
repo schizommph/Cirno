@@ -100,6 +100,15 @@
                         case ']':
                             tokens.Add(new Token(TokenType.CLOSED_SQUARE, this.currentChar, currentLine));
                             break;
+                        case '{':
+                            tokens.Add(new Token(TokenType.OPEN_CURLY, this.currentChar, currentLine));
+                            break;
+                        case '}':
+                            tokens.Add(new Token(TokenType.CLOSED_CURLY, this.currentChar, currentLine));
+                            break;
+                        case ':':
+                            tokens.Add(new Token(TokenType.COLON, this.currentChar, currentLine));
+                            break;
                         case ',':
                             tokens.Add(new Token(TokenType.COMMA, this.currentChar, currentLine));
                             break;
@@ -201,6 +210,12 @@
                     return;
                 case "fn":
                     tokens.Add(new Token(TokenType.FN, iden, currentLine));
+                    return;
+                case "for":
+                    tokens.Add(new Token(TokenType.FOR, iden, currentLine));
+                    return;
+                case "in":
+                    tokens.Add(new Token(TokenType.IN, iden, currentLine));
                     return;
                 case "true":
                     tokens.Add(new Token(TokenType.BOOL, true, currentLine));

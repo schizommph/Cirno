@@ -91,6 +91,15 @@ namespace Cirno
             }
             return new ListClass(items);
         }
+        public ObjectClass VisitDictionaryNode(DictionaryNode node, Enviorment parent)
+        {
+            Dictionary<ObjectClass, ObjectClass> items = new Dictionary<ObjectClass, ObjectClass>();
+            foreach (Node item in node.items.Keys)
+            {
+                items[item.Visit(this, parent)] = node.items[item].Visit(this, parent);
+            }
+            return new DictionaryClass(items);
+        }
         public ObjectClass VisitSetVariableNode(SetVariableNode node, Enviorment parent)
         {
             ObjectClass expr = node.expr.Visit(this, parent);
@@ -148,6 +157,24 @@ namespace Cirno
                     node.action.Visit(this, parent);
                 }
                 catch(BreakException)
+                {
+                    break;
+                }
+            }
+            return new NovaClass();
+        }
+        public ObjectClass VisitForNode(ForNode node, Enviorment parent)
+        {
+            Enviorment env = new Enviorment(parent);
+            ObjectClass list = node.list.Visit(this, parent);
+            foreach(ObjectClass item in list.ToList().items)
+            {
+                env.SetVariable(node.varName, item);
+                try
+                {
+                    node.action.Visit(this, env);
+                }
+                catch (BreakException)
                 {
                     break;
                 }

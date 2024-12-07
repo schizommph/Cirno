@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cirno.StandardIO
+namespace Cirno.Standard
 {
     class Input : FunctionNode
     {

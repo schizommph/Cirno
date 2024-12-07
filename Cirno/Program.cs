@@ -1,4 +1,4 @@
-﻿using Cirno.StandardIO;
+﻿using Cirno.Standard;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 namespace Cirno
@@ -39,6 +39,9 @@ namespace Cirno
             );
             Enviorment.global.Add(
                 "input", new FunctionClass(new Input())
+            );
+            Enviorment.global.Add(
+                "range", new FunctionClass(new Standard.Range())
             );
 
             // Stopwatch watch = Stopwatch.StartNew();
