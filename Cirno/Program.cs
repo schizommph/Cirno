@@ -7,14 +7,29 @@ namespace Cirno
     {
         static void Main(string[] args)
         {
-            // Stopwatch watch = Stopwatch.StartNew();
-
+            ObjectClass ret = null;
+            if (args.Length == 1)
+            {
+                ret = RunFile(args[0]);
+            }
+            else
+            {
+                ret = RunFile("main.crn");
+            }
+            if (ret != null)
+            {
+                Console.Write(ret.Out());
+            }
+            Console.ReadKey();
+        }
+        public static ObjectClass RunFile(string name)
+        {
             string source = File.ReadAllText("main.crn");
 
             Lexer lexer = new Lexer(source);
             List<Token> tokens = lexer.Lex();
 
-            if(ErrorManager.ComputeErrors())
+            if (ErrorManager.ComputeErrors())
             {
                 Console.ReadKey();
                 Environment.Exit(1);
@@ -45,14 +60,10 @@ namespace Cirno
             );
 
             // Stopwatch watch = Stopwatch.StartNew();
-
+            ObjectClass ret = null;
             try
             {
-                ObjectClass ret = interpreter.Visit(ast, enviorment);
-                if(ret != null)
-                {
-                    Console.Write(ret.Out());
-                }
+                ret = interpreter.Visit(ast, enviorment);
             }
             catch (BreakException)
             {
@@ -62,10 +73,7 @@ namespace Cirno
             {
                 ErrorManager.AddError(new Error($"Return had been used in an innappropriate matter.", ErrorType.UnexpectedException, ErrorSafety.Fatal));
             }
-
-            // watch.Stop();
-            // Console.WriteLine($"Elapsed: {watch.ElapsedMilliseconds / 1000f}");
-            Console.ReadKey();
+            return ret;
         }
     }
 }
