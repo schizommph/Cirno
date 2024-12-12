@@ -58,6 +58,18 @@ namespace Cirno
             Enviorment.global.Add(
                 "range", new FunctionClass(new Standard.Range())
             );
+            Enviorment.global.Add(
+                "num", new FunctionClass(new Standard.Num())
+            );
+            Enviorment.global.Add(
+                "char", new FunctionClass(new Standard.Char())
+            );
+            Enviorment.global.Add(
+                "ordn", new FunctionClass(new Standard.Ordinal())
+            );
+            Enviorment.global.Add(
+                "readkey", new FunctionClass(new Standard.ReadKey())
+            );
 
             // Stopwatch watch = Stopwatch.StartNew();
             ObjectClass ret = null;
