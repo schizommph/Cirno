@@ -1,1 +1,1 @@
-﻿i=readkey()while i=="1"print(1)end print(0)
+﻿print(random())

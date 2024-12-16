@@ -70,6 +70,9 @@ namespace Cirno
             Enviorment.global.Add(
                 "readkey", new FunctionClass(new Standard.ReadKey())
             );
+            Enviorment.global.Add(
+                "random", new FunctionClass(new Standard.Random())
+            );
 
             // Stopwatch watch = Stopwatch.StartNew();
             ObjectClass ret = null;
