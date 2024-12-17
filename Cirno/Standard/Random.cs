@@ -20,7 +20,6 @@ namespace Cirno.Standard
                 return new NumberClass((float)random.NextDouble());
             }
         }
-
         public Random() : base("random", new List<InnerFunctionNode>())
         {
             base.actions.Add(new RandomEnd());
