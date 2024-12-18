@@ -83,6 +83,19 @@ namespace Cirno
                 }
             }
         }
+        public static void AddError(Error error, bool autocheck)
+        {
+            ErrorManager.autocheck = autocheck;
+            errors.Add(error);
+            if (ErrorManager.autocheck)
+            {
+                if (ComputeErrors())
+                {
+                    Console.ReadKey();
+                    Environment.Exit(1);
+                }
+            }
+        }
         public static bool ComputeErrors()
         {
             ConsoleColor backgroundColor = Console.ForegroundColor;

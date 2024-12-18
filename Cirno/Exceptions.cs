@@ -10,6 +10,10 @@ namespace Cirno
     {
 
     }
+    class ContinueException : Exception
+    {
+
+    }
     class ReturnException : Exception
     {
         public ObjectClass value { get; private set; }

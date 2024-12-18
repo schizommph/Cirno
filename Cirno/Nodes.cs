@@ -172,6 +172,17 @@ namespace Cirno
             return interpreter.VisitBreakNode(this, parent);
         }
     }
+    class ContinueNode : Node
+    {
+        public override string ToString()
+        {
+            return $"<ContinueNode>";
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitContinueNode(this, parent);
+        }
+    }
     class ReturnNode : Node
     {
         public Node expr { get; private set; }

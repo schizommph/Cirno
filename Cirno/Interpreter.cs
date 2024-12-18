@@ -51,6 +51,10 @@ namespace Cirno
         {
             throw new BreakException();
         }
+        public ObjectClass VisitContinueNode(ContinueNode node, Enviorment parent)
+        {
+            throw new ContinueException();
+        }
         public ObjectClass VisitReturnNode(ReturnNode node, Enviorment parent)
         {
             if(node.expr == null)
@@ -160,6 +164,10 @@ namespace Cirno
                 {
                     break;
                 }
+                catch (ContinueException)
+                {
+                    continue;
+                }
             }
             return new NovaClass();
         }
@@ -177,6 +185,10 @@ namespace Cirno
                 catch (BreakException)
                 {
                     break;
+                }
+                catch (ContinueException)
+                {
+                    continue;
                 }
             }
             return new NovaClass();

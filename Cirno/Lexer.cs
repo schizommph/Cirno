@@ -240,6 +240,9 @@
                 case "return":
                     tokens.Add(new Token(TokenType.RETURN, iden, currentLine));
                     return;
+                case "continue":
+                    tokens.Add(new Token(TokenType.CONTINUE, iden, currentLine));
+                    return;
             }
             tokens.Add(new Token(TokenType.IDENTIFIER, iden, currentLine));
         }

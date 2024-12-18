@@ -18,7 +18,7 @@ enum TokenType
     AND, OR,
 
     WHILE, IF, ELIF, ELSE, FN, FOR, IN,
-    BREAK, RETURN,
+    BREAK, RETURN, CONTINUE,
 
     ADD, POP,
 

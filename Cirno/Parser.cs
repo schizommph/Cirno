@@ -44,6 +44,11 @@ namespace Cirno
                 Advance();
                 return new BreakNode();
             }
+            else if (Match(TokenType.CONTINUE))
+            {
+                Advance();
+                return new ContinueNode();
+            }
             else if (Match(TokenType.RETURN))
             {
                 Advance();
@@ -59,7 +64,7 @@ namespace Cirno
                 Node list = Expr();
 
                 List<Node> ast = new List<Node>();
-                while (!Match(TokenType.END))
+                while (currentToken != null && !Match(TokenType.END))
                 {
                     if (currentToken == null || Peak() == null && !Match(TokenType.END))
                     {
@@ -80,7 +85,7 @@ namespace Cirno
                 Node expr = Expr();
 
                 List<Node> ast = new List<Node>();
-                while (!Match(TokenType.END))
+                while (currentToken != null && !Match(TokenType.END))
                 {
                     if (currentToken == null || Peak() == null && !Match(TokenType.END))
                     {
@@ -99,7 +104,7 @@ namespace Cirno
                 string name = (string)Consume(TokenType.IDENTIFIER).lexeme;
                 List<string> parameters = new List<string>();
                 Consume(TokenType.OPEN_PAREN);
-                while(!Match(TokenType.CLOSED_PAREN))
+                while(currentToken != null && !Match(TokenType.CLOSED_PAREN))
                 {
                     parameters.Add((string)Consume(TokenType.IDENTIFIER).lexeme);
                     if(!Match(TokenType.COMMA) && !Match(TokenType.CLOSED_PAREN))
@@ -113,7 +118,7 @@ namespace Cirno
                 }
                 Consume(TokenType.CLOSED_PAREN);
                 List<Node> ast = new List<Node>();
-                while (!Match(TokenType.END))
+                while (currentToken != null && !Match(TokenType.END))
                 {
                     ast.Add(Parse());
                 }
@@ -143,7 +148,7 @@ namespace Cirno
                 Consume(TokenType.OPEN_PAREN);
 
                 List<Node> arguments = new List<Node>();
-                while (!Match(TokenType.CLOSED_PAREN))
+                while (currentToken != null && !Match(TokenType.CLOSED_PAREN))
                 {
                     arguments.Add(Expr());
                     if (!Match(TokenType.COMMA) && !Match(TokenType.CLOSED_PAREN))
@@ -207,7 +212,7 @@ namespace Cirno
                 Advance();
                 List<Node> items = new List<Node>();
 
-                while (!Match(TokenType.CLOSED_SQUARE))
+                while (currentToken != null && !Match(TokenType.CLOSED_SQUARE))
                 {
                     items.Add(Expr());
                     if (!Match(TokenType.COMMA) && !Match(TokenType.CLOSED_SQUARE))
@@ -228,7 +233,7 @@ namespace Cirno
                 Advance();
                 Dictionary<Node, Node> items = new Dictionary<Node, Node>();
 
-                while (!Match(TokenType.CLOSED_CURLY))
+                while (currentToken != null && !Match(TokenType.CLOSED_CURLY))
                 {
                     Node index = Expr();
                     Consume(TokenType.COLON);
@@ -252,7 +257,7 @@ namespace Cirno
                 Token doToken = currentToken;
                 Advance();
                 List<Node> ast = new List<Node>();
-                while (!Match(TokenType.END))
+                while (currentToken != null && !Match(TokenType.END))
                 {
                     if (currentToken == null || Peak() == null && !Match(TokenType.END))
                     {
@@ -270,9 +275,18 @@ namespace Cirno
                 Dictionary<Node, TreeNode> ifActions = new Dictionary<Node, TreeNode>();
                 TreeNode elseAction = null;
 
-                while(true)
+                Advance();
+                Node ifExpr = Expr();
+                List<Node> ifAst = new List<Node>();
+                while (currentToken != null && !Match(TokenType.ELIF, TokenType.ELSE, TokenType.END))
                 {
-                    if(Match(TokenType.IF, TokenType.ELIF))
+                    ifAst.Add(Parse());
+                }
+                ifActions.Add(ifExpr, new TreeNode(ifAst));
+
+                while (true)
+                {
+                    if(currentToken != null && Match(TokenType.ELIF))
                     {
                         Advance();
                         Node expr = Expr();
@@ -283,7 +297,7 @@ namespace Cirno
                         }
                         ifActions.Add(expr, new TreeNode(ast));
                     }
-                    else if(Match(TokenType.ELSE))
+                    else if(currentToken != null && Match(TokenType.ELSE))
                     {
                         Advance();
                         List<Node> ast = new List<Node>();
@@ -293,12 +307,12 @@ namespace Cirno
                         }
                         elseAction = new TreeNode(ast);
                     }
-                    else if (Match(TokenType.END))
+                    else if (Match(TokenType.END) || currentToken == null)
                     {
-                        Advance();
                         break;
                     }
                 }
+                Consume(TokenType.END);
                 ret = new IfNode(ifActions, elseAction);
             }
             else
@@ -306,6 +320,10 @@ namespace Cirno
                 if(currentToken != null)
                 {
                     ErrorManager.AddError(new Error($"Unexpected token \"{currentToken.type}\".", currentToken.line, ErrorType.UnexpectedToken, ErrorSafety.Fatal));
+                }
+                else
+                {
+                    ErrorManager.AddError(new Error($"Unexpected EOF.", ErrorType.UnexpectedToken, ErrorSafety.Fatal), true);
                 }
                 Advance();
             }
@@ -437,9 +455,16 @@ namespace Cirno
         }
         Token Consume(TokenType type)
         {
-            if(currentToken.type != type)
+            if(currentToken == null || currentToken.type != type)
             {
-                ErrorManager.AddError(new Error($"Expected \"{type}\", instead got {currentToken.type}", currentToken.line, ErrorType.UnexpectedToken, ErrorSafety.Fatal));
+                if(currentToken != null)
+                {
+                    ErrorManager.AddError(new Error($"Expected \"{type}\", instead got {currentToken.type}", currentToken.line, ErrorType.UnexpectedToken, ErrorSafety.Fatal));
+                }
+                else
+                {
+                    ErrorManager.AddError(new Error($"Expected \"{type}\", instead got EOF", ErrorType.UnexpectedToken, ErrorSafety.Fatal));
+                }
                 return new Token(TokenType.NOVA, "nova", -1);
             }
             else

@@ -240,7 +240,14 @@ namespace Cirno
         }
         public override string Out()
         {
-            return Regex.Unescape($"{value}");
+            string unescaped = value
+                .Replace("\\n", "\n")
+                .Replace("\\t", "\t")
+                .Replace("\\r", "\r")
+                .Replace("\\\"", "\"")
+                .Replace("\\\\", "\\");
+
+            return unescaped;
         }
         public override string ToString()
         {

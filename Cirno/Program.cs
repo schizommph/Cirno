@@ -73,6 +73,9 @@ namespace Cirno
             Enviorment.global.Add(
                 "random", new FunctionClass(new Standard.Random())
             );
+            Enviorment.global.Add(
+                "sys", new FunctionClass(new Standard.Sys())
+            );
 
             // Stopwatch watch = Stopwatch.StartNew();
             ObjectClass ret = null;
