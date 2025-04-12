@@ -150,6 +150,12 @@ namespace Cirno
             Console.Write(value.Out());
             return new NovaClass();
         }
+        public ObjectClass VisitUsingNode(UsingNode node, Enviorment parent)
+        {
+            Program.RunFile(node.path + ".crn");
+
+            return new NovaClass();
+        }
         public ObjectClass VisitWhileNode(WhileNode node, Enviorment parent)
         {
             while (true)

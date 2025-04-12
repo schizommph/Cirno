@@ -31,6 +31,18 @@ namespace Cirno
         }
     }
 
+    class UsingNode : Node
+    {
+        public string path { get; private set; }
+        public UsingNode(string path)
+        {
+            this.path = path;
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitUsingNode(this, parent);
+        }
+    }
     class PrintNode : Node
     {
         public Node value { get; private set; }

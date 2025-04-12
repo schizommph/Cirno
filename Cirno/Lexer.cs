@@ -112,6 +112,9 @@
                         case ',':
                             tokens.Add(new Token(TokenType.COMMA, this.currentChar, currentLine));
                             break;
+                        case '.':
+                            tokens.Add(new Token(TokenType.DOT, this.currentChar, currentLine));
+                            break;
                         case '"':
                             GetString();
                             break;
@@ -184,6 +187,9 @@
                 /*case "print":
                     tokens.Add(new Token(TokenType.PRINT, iden, currentLine));
                     return;*/
+                case "using":
+                    tokens.Add(new Token(TokenType.USING, iden, currentLine));
+                    return;
                 case "do":
                     tokens.Add(new Token(TokenType.DO, iden, currentLine));
                     return;
@@ -210,6 +216,12 @@
                     return;
                 case "fn":
                     tokens.Add(new Token(TokenType.FN, iden, currentLine));
+                    return;
+                case "class":
+                    tokens.Add(new Token(TokenType.CLASS, iden, currentLine));
+                    return;
+                case "new":
+                    tokens.Add(new Token(TokenType.NEW, iden, currentLine));
                     return;
                 case "for":
                     tokens.Add(new Token(TokenType.FOR, iden, currentLine));

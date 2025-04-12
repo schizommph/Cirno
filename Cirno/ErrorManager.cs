@@ -23,6 +23,9 @@ namespace Cirno
         IndexOutOfBounds,
         UnallowedListModification,
         NoKeyFound,
+        UsingObject,
+        IncorrectFileExtension,
+        FileNotFound,
     }
     enum ErrorSafety
     {
@@ -78,7 +81,6 @@ namespace Cirno
             {
                 if (ComputeErrors())
                 {
-                    Console.ReadKey();
                     Environment.Exit(1);
                 }
             }
@@ -91,7 +93,6 @@ namespace Cirno
             {
                 if (ComputeErrors())
                 {
-                    Console.ReadKey();
                     Environment.Exit(1);
                 }
             }

@@ -5,14 +5,23 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>cirno_icon_one..ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="main.crn" />
+    <None Remove="other.crn" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="cirno_icon_one..ico" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="main.crn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="other.crn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

@@ -34,10 +34,25 @@ namespace Cirno
         public Node Parse()
         {
             if (Match(TokenType.PRINT))
-            {
+            {   
                 Advance();
                 Node expr = Expr();
                 return new PrintNode(expr);
+            }
+            else if (Match(TokenType.USING))
+            {
+                Token usingToken = currentToken;
+                Advance();
+                if(Match(TokenType.STRING))
+                {
+                    string path = (string)currentToken.lexeme;
+                    Advance();
+                    return new UsingNode(path);
+                }
+
+                ErrorManager.autocheck = true;
+                ErrorManager.AddError(new Error($"Using path is not a string.", usingToken.line, ErrorType.UsingObject, ErrorSafety.Fatal));
+                return new NovaNode();
             }
             else if (Match(TokenType.BREAK))
             {
