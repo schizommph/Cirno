@@ -92,7 +92,7 @@ y = 20
 ```
 
 ## typeof
-```
+```rust
 a = ["h", 10, nova, true]
 print(typeof a) # List
 print(typeof a[0]) # "String"
