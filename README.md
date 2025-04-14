@@ -3,7 +3,7 @@ A simple programming language. **[WIP]**
 
 ## Hello, World! Program
 ```rust
-"Hello, World!"
+print("Hello, World!")
 ```
 
 ## Simple loop
@@ -74,4 +74,29 @@ while true
 
 	print()
 end
+```
+
+## Referencing other files & Global variables
+`main.crn`
+```rust
+using "lib"
+
+print(x) # 10, because it's global
+print(y) # error, is not found
+```
+`other.crn`
+```rust
+global x
+x = 10
+y = 20
+```
+
+## typeof
+```
+a = ["h", 10, nova, true]
+print(typeof a) # List
+print(typeof a[0]) # "String"
+print(typeof a[1]) # "Number"
+print(typeof a[2]) # "Nova"
+print(typeof a[3]) # "Bool"
 ```
