@@ -91,10 +91,10 @@ x = 10
 y = 20
 ```
 
-## typeof
+## Using typeof
 ```rust
 a = ["h", 10, nova, true]
-print(typeof a) # List
+print(typeof a) # "List"
 print(typeof a[0]) # "String"
 print(typeof a[1]) # "Number"
 print(typeof a[2]) # "Nova"
