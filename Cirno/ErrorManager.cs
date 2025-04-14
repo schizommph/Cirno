@@ -26,6 +26,7 @@ namespace Cirno
         UsingObject,
         IncorrectFileExtension,
         FileNotFound,
+        GlobalIsNotIdentifier,
     }
     enum ErrorSafety
     {

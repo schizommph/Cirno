@@ -43,6 +43,18 @@ namespace Cirno
             return interpreter.VisitUsingNode(this, parent);
         }
     }
+    class GlobalNode : Node
+    {
+        public string name { get; private set; }
+        public GlobalNode(string name)
+        {
+            this.name = name;
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitGlobalNode(this, parent);
+        }
+    }
     class PrintNode : Node
     {
         public Node value { get; private set; }
@@ -193,6 +205,22 @@ namespace Cirno
         public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
         {
             return interpreter.VisitContinueNode(this, parent);
+        }
+    }
+    class TypeOfObjectNode : Node
+    {
+        public Node identifier { get; private set; }
+        public TypeOfObjectNode(Node identifier)
+        {
+            this.identifier = identifier;
+        }
+        public override string ToString()
+        {
+            return $"<TypeOfObjectNode>";
+        }
+        public override ObjectClass Visit(Interpreter interpreter, Enviorment parent)
+        {
+            return interpreter.VisitTypeOfObjectNode(this, parent);
         }
     }
     class ReturnNode : Node

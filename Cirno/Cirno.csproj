@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <None Remove="main.crn" />
-    <None Remove="other.crn" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,9 +18,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="main.crn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="other.crn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

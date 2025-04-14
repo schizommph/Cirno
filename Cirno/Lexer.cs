@@ -190,6 +190,12 @@
                 case "using":
                     tokens.Add(new Token(TokenType.USING, iden, currentLine));
                     return;
+                case "global":
+                    tokens.Add(new Token(TokenType.GLOBAL, iden, currentLine));
+                    return;
+                case "typeof":
+                    tokens.Add(new Token(TokenType.TYPEOF, iden, currentLine));
+                    return;
                 case "do":
                     tokens.Add(new Token(TokenType.DO, iden, currentLine));
                     return;

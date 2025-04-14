@@ -7,34 +7,27 @@ namespace Cirno
     {
         static void Main(string[] args)
         {
-            ObjectClass ret = null;
             if (args.Length == 1)
             {
-                ret = RunFile(args[0]);
+                RunFile(args[0]);
             }
             else
             {
-                ret = RunFile("main.crn");
-            }
-            if (ret != null)
-            {
-                Console.Write(ret.Out());
+                RunFile("main.crn");
             }
         }
-        public static ObjectClass RunFile(string name)
+        public static void RunFile(string name)
         {
             if(!name.EndsWith(".crn"))
             {
                 ErrorManager.autocheck = true;
                 ErrorManager.AddError(new Error("Cirno files can only end in \".crn\".", ErrorType.IncorrectFileExtension, ErrorSafety.Fatal));
-                return new NovaClass();
             }
 
             if(!File.Exists(name))
             {
                 ErrorManager.autocheck = true;
                 ErrorManager.AddError(new Error($"File \"{name}\" does not exist.", ErrorType.FileNotFound, ErrorSafety.Fatal));
-                return new NovaClass();
             }
 
             string source = File.ReadAllText(name);
@@ -92,10 +85,9 @@ namespace Cirno
             }
 
             // Stopwatch watch = Stopwatch.StartNew();
-            ObjectClass ret = null;
             try
             {
-                ret = interpreter.Visit(ast, enviorment);
+                interpreter.Visit(ast, enviorment);
             }
             catch (BreakException)
             {
@@ -105,7 +97,6 @@ namespace Cirno
             {
                 ErrorManager.AddError(new Error($"Return had been used in an innappropriate matter.", ErrorType.UnexpectedException, ErrorSafety.Fatal));
             }
-            return ret;
         }
     }
 }

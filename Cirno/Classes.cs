@@ -381,7 +381,7 @@ namespace Cirno
     {
         public override string Out()
         {
-            return $"";
+            return $"Nova";
         }
         public override string ToString()
         {

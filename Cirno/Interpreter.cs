@@ -20,12 +20,11 @@ namespace Cirno
         public ObjectClass VisitTreeNode(TreeNode node, Enviorment parent)
         {
             Enviorment env = new Enviorment(parent);
-            ObjectClass ret = null;
             foreach(Node branch in node.nodes)
             {
-                ret = branch.Visit(this, env);
+                branch.Visit(this, env);
             }
-            return ret;
+            return new NovaClass();
         }
         public ObjectClass VisitNumberNode(NumberNode node, Enviorment parent)
         {
@@ -155,6 +154,27 @@ namespace Cirno
             Program.RunFile(node.path + ".crn");
 
             return new NovaClass();
+        }
+        public ObjectClass VisitGlobalNode(GlobalNode node, Enviorment parent)
+        {
+            if(parent.ContainsVariable(node.name))
+            {
+                ObjectClass var = parent.GetVariable(node.name);
+                parent.variables.Remove(node.name);
+                Enviorment.SetGlobalVariable(node.name, var);
+            }
+            else
+            {
+                Enviorment.SetGlobalVariable(node.name, new NovaClass());
+            }
+
+            return new NovaClass();
+        }
+        public ObjectClass VisitTypeOfObjectNode(TypeOfObjectNode node, Enviorment parent)
+        {
+            ObjectClass obj = node.identifier.Visit(this, parent);
+
+            return new StringClass(obj.GetType());
         }
         public ObjectClass VisitWhileNode(WhileNode node, Enviorment parent)
         {

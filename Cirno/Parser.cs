@@ -54,6 +54,21 @@ namespace Cirno
                 ErrorManager.AddError(new Error($"Using path is not a string.", usingToken.line, ErrorType.UsingObject, ErrorSafety.Fatal));
                 return new NovaNode();
             }
+            else if (Match(TokenType.GLOBAL))
+            {
+                Token globalToken = currentToken;
+                Advance();
+                if (Match(TokenType.IDENTIFIER))
+                {
+                    string name = (string)currentToken.lexeme;
+                    Advance();
+                    return new GlobalNode(name);
+                }
+
+                ErrorManager.autocheck = true;
+                ErrorManager.AddError(new Error($"Global variable's name isn't an identifier", globalToken.line, ErrorType.GlobalIsNotIdentifier, ErrorSafety.Fatal));
+                return new NovaNode();
+            }
             else if (Match(TokenType.BREAK))
             {
                 Advance();
@@ -195,6 +210,11 @@ namespace Cirno
             {
                 Advance();
                 ret = new BinaryOperatorNode(Factor(), new NumberNode(-1f), new Token(TokenType.STAR, '*', currentToken.line));
+            }
+            else if (Match(TokenType.TYPEOF))
+            {
+                Advance();
+                ret = new TypeOfObjectNode(Expr());
             }
             else if (Match(TokenType.STRING))
             {

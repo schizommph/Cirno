@@ -1,1 +1,6 @@
-﻿using "other"
+﻿a = ["h", 10, nova, true]
+print(typeof a)
+print(typeof a[0])
+print(typeof a[1])
+print(typeof a[2])
+print(typeof a[3])

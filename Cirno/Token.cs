@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 enum TokenType
 {
-    USING,
+    USING, GLOBAL, TYPEOF,
 
     NUMBER, STRING, IDENTIFIER, BOOL, NOVA,
 
