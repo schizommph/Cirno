@@ -79,7 +79,7 @@ end
 ## Referencing other files & Global variables
 `main.crn`
 ```rust
-using "lib"
+using "other"
 
 print(x) # 10, because it's global
 print(y) # error, is not found
